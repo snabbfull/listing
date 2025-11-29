@@ -5,7 +5,7 @@ interface Item {
   title?: string;
   price?: string;
   quantity?: number;
-  currency_code?: string;
+  currency_code?: string | undefined;
   state?: string;
 }
 
@@ -19,8 +19,14 @@ function getStockClass(qty: number) {
   return "stock-high";
 }
 
-export function Listing({ data }: ListingProps) {
+function getCurrency(currency: string | undefined) {
+  if (currency === "USD") return "$";
+  if (currency === "EUR") return "€";
+  if (currency === "GBP") return "£";
+  return currency + " ";
+}
 
+export function Listing({ data }: ListingProps) {
   const validData = data.filter(
     (item) => item.state === "active" && item.MainImage && item.title
   );
@@ -42,10 +48,12 @@ export function Listing({ data }: ListingProps) {
             </h3>
             <div className="price-container">
               <div className="product-price">
-                {item.currency_code}
+                {getCurrency(item.currency_code)}
                 {item.price}
               </div>
-              <span className={`stock-badge ${getStockClass(item.quantity ?? 0)}`}>
+              <span
+                className={`stock-badge ${getStockClass(item.quantity ?? 0)}`}
+              >
                 {item.quantity} left
               </span>
             </div>
@@ -55,5 +63,3 @@ export function Listing({ data }: ListingProps) {
     </div>
   );
 }
-
-  
